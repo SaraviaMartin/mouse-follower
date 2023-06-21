@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
-function App() {
+
+const FollowMouse = () => {
   const [enabled, setEnabled] = useState(false)
   const [position, setPosition] = useState({x: 0, y: 0})
 
@@ -15,10 +16,18 @@ function App() {
     if (enabled){
       window.addEventListener('pointermove', handleMove)
     }
-  }, [enabled])
 
+
+    //cleanup
+    //cuando el componente se desmonta
+    //cuando cambian las dependencias antes de ejecutar el efecto de nuevo
+    return () => {
+      console.log('cleanup')
+      window.removeEventListener('pointermove', handleMove)
+    }
+  }, [enabled])
   return (
-    <main>
+    <>
       <div style={{
         position: 'absolute',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -37,8 +46,20 @@ function App() {
       <button onClick={()=> setEnabled(!enabled)}>
         {enabled ?  'Desactivar ' : 'Activar '} Seguir puntero
       </button>
+    </>
+  )
+}
+function App() {
+  const [mounted, setMounted] = useState(true)
+
+  return(
+    <main>
+      {mounted && <FollowMouse/>}
+      <button onClick={() => setMounted(!mounted)}>Toggle mounted FollowMouse component</button>
     </main>
   )
+
+  
 }
 
 export default App
